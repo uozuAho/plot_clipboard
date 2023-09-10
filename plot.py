@@ -7,21 +7,26 @@ from datetime import datetime
 
 def main():
     headings, data_strs = read_raw_columns()
+    # assume first column is date, x axis
     x = parse_date_column(data_strs[0])
     float_data = []
-    for col in data_strs:
+    text_data = []
+    for col in data_strs[1:]:
         try:
             float_data.append(parse_float_column(col))
         except ValueError:
-            pass
-
-    # print(headings)
-    # for i in range(len(float_data[0])):
-    #     print([x[i] for x in float_data])
+            text_data.append(col)
 
     for col in float_data:
         plt.plot(x, col)
     plt.legend(headings[1:])
+    _, ymax = yminmax(float_data)
+    plt.ylim(-2, ymax * 1.1)
+    # assume one note column, if any
+    for xpos, txt in zip(x, text_data[0]):
+        if txt:
+            plt.annotate(txt, xy=(xpos, 0), xytext=(xpos, -1),
+                            arrowprops=dict(facecolor='black', shrink=0.05))
     plt.show()
 
 
@@ -33,7 +38,6 @@ def read_raw_columns():
     column_headings = []
     column_value_strs = []
     for line in sys.stdin:
-        print(line)
         if not column_headings:
             column_headings = [x.strip() for x in line.split('|')]
             column_value_strs = [[] for _ in column_headings]
@@ -51,6 +55,17 @@ def parse_date_column(col):
 
 def parse_float_column(col):
     return [float(x) if x else None for x in col]
+
+
+def yminmax(float_data):
+    min_val = float('inf')
+    max_val = float('-inf')
+    for col in float_data:
+        for val in col:
+            if val is not None:
+                min_val = min(min_val, val)
+                max_val = max(max_val, val)
+    return min_val, max_val
 
 
 if __name__ == '__main__':
