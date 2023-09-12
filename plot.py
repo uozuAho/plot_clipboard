@@ -17,21 +17,19 @@ def main():
         except ValueError:
             text_data.append(col)
 
+    # plot
     for col in float_data:
         plt.plot(x, col)
     plt.legend(headings[1:])
     _, ymax = yminmax(float_data)
-
-    # Add notes. assume one note column, if any
     plt.ylim(-2, ymax * 1.1)
-    text_ys = [-.5, -1, -1.5, -2]
-    text_y_idx = 0
+
+    # Add notes. Assume at most one note column
     for xpos, txt in zip(x, text_data[0]):
         if txt:
-            text_y_idx = (text_y_idx + 1) % len(text_ys)
-            plt.annotate(txt, xy=(xpos, 0), xytext=(xpos, text_ys[text_y_idx]),
-                         rotation=45, ha='center',
-                         arrowprops=dict(arrowstyle='->'))
+            plt.annotate(txt, xy=(xpos, 0),
+                         rotation=60, ha='right', va='top')
+
     plt.show()
 
 
