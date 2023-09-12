@@ -1,6 +1,6 @@
 # Plot clipboard contents
 
-Assumes
+Assumes:
 - markdown format
 - first column is date
 - other columns are numerical
@@ -27,3 +27,6 @@ pyinstaller -F plot.py
 ```
 
 This creates a single executable file.
+
+# Todo
+- nicer message on error parsing clipboard
