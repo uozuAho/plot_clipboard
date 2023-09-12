@@ -21,12 +21,17 @@ def main():
         plt.plot(x, col)
     plt.legend(headings[1:])
     _, ymax = yminmax(float_data)
+
+    # Add notes. assume one note column, if any
     plt.ylim(-2, ymax * 1.1)
-    # assume one note column, if any
+    text_ys = [-.5, -1, -1.5, -2]
+    text_y_idx = 0
     for xpos, txt in zip(x, text_data[0]):
         if txt:
-            plt.annotate(txt, xy=(xpos, 0), xytext=(xpos, -1),
-                            arrowprops=dict(facecolor='black', shrink=0.05))
+            text_y_idx = (text_y_idx + 1) % len(text_ys)
+            plt.annotate(txt, xy=(xpos, 0), xytext=(xpos, text_ys[text_y_idx]),
+                         rotation=45, ha='center',
+                         arrowprops=dict(arrowstyle='->'))
     plt.show()
 
 
@@ -54,7 +59,11 @@ def parse_date_column(col):
 
 
 def parse_float_column(col):
-    return [float(x) if x else None for x in col]
+    return [float(x) if not isblank(x) else None for x in col]
+
+
+def isblank(x):
+    return x is None or x == '' or x == '?'
 
 
 def yminmax(float_data):
